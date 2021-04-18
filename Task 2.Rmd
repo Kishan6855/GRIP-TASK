@@ -1,0 +1,69 @@
+---
+title: 'THE SPARK FOUNDATION: Task:2-Predict the optimum number of clusters and represent
+  it visually'
+author: "Kishan Zaru"
+date: "18/04/2021"
+output:
+  html_document: default
+  word_document: default
+---
+step 1: Importing required Libraries
+```{r}
+
+library("ggplot2")
+library("factoextra")
+library("dplyr")
+library("cluster")
+```
+step 2: Read the dataset and explore
+```{r}
+#unsupervised learning -converting iris data to unlabelled dataframe
+attach(iris)
+mydata=data.frame(Sepal.Length,Sepal.Width,Petal.Length,Petal.Width)
+#exploring the dataset
+head(mydata)
+#variables and their datatypes 
+str(mydata)
+#five point summary
+summary(mydata)
+```
+```{r}
+#Scatter plot
+#Sepal length vs sepal width
+scatterplot=ggplot(data=iris,aes(x=Sepal.Width,y=Sepal.Length))
+p1=scatterplot+geom_point(aes(color=Species,shape=Species))+xlab("Sepal Length")+ylab("Sepal Width")+ggtitle("Sepal Length Vs Sepal Width")
+#Petal length Vs Petal Width
+scatterplot1=ggplot(data=iris,aes(x=Petal.Width,y=Petal.Length))
+p2=scatterplot1+geom_point(aes(color=Species,shape=Species))+xlab("Petal Length")+ylab("Petal Width")+ggtitle("Petal Length Vs Petal Width")
+par(mfrow=c(2,1))
+plot(p1)
+plot(p2)
+```
+```{r}
+#Scale each variable to have a mean of 0 and sd of 1
+df=scale(mydata)
+head(df)
+```
+step 3:optimise the k value
+```{r}
+#wss-measure amount of variation within cluster 
+#wss plot to choose optimum number of clusters 
+fviz_nbclust(df,kmeans,method ="wss")
+```
+step 4:Perform k-means clustering with optimal k
+```{r}
+#k-means clustering: it is one of the unsupervised learning technique that segregate the data into clusters
+KM=kmeans(df,centers = 2)
+KM
+```
+step 5:Graphical representation 
+```{r}
+#plot results of final k-means model
+fviz_cluster(KM,data=df,geom="point")
+```
+```{r}
+#original data
+final_data=cbind(mydata,cluster=KM$cluster)
+final_data
+```
+
